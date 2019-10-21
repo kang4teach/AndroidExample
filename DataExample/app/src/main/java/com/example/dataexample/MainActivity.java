@@ -16,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.google.gson.Gson;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
@@ -31,7 +33,7 @@ import java.io.InputStreamReader;
 public class MainActivity extends AppCompatActivity {
     TextView textView;
     EditText editText;
-    Button internalFileBtn, externalFileBtn,xmlBtn;
+    Button internalFileBtn, externalFileBtn,xmlBtn,jsonBtn;
     private int requestCode = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +78,27 @@ public class MainActivity extends AppCompatActivity {
                 WriteAndReadXml();
             }
         });
+
+        jsonBtn = findViewById(R.id.jsonBtn);
+        jsonBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                JsonParse();
+            }
+        });
+    }
+
+    private void JsonParse() {
+        String jsonStr = "{" +"    \"name\": \"xiaoming\"," + "    \"age\": 20" +"}";
+        Gson gson = new Gson();
+        Student stu = gson.fromJson(jsonStr,Student.class);
+
+        Student stu2 = new Student();
+        stu2.name = "xiaohong";
+        stu2.age = 21;
+        String stu2JsonStr = gson.toJson(stu2);
+
+        textView.setText(stu2JsonStr);
     }
 
     private void WriteAndReadXml() {
