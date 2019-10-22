@@ -2,6 +2,7 @@ package com.example.dataexample;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -17,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -29,11 +31,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 
 public class MainActivity extends AppCompatActivity {
     TextView textView;
     EditText editText;
-    Button internalFileBtn, externalFileBtn,xmlBtn,jsonBtn;
+    Button internalFileBtn, externalFileBtn,xmlBtn,jsonBtn, sharedPreferencesBtn;
     private int requestCode = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,19 +89,95 @@ public class MainActivity extends AppCompatActivity {
                 JsonParse();
             }
         });
+
+        sharedPreferencesBtn = findViewById(R.id.sharedPreferencesBtn);
+        sharedPreferencesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                WriteAndReadSharedPreferences();
+            }
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
+    {
+        if (requestCode == this.requestCode){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                WriteAndReadExternalFile();
+            }
+        }
+    }
+
+    private void WriteAndReadInternalFile()
+    {
+        try {
+            FileOutputStream fileOutputStream = openFileOutput("data",MODE_APPEND);
+            fileOutputStream.write(editText.getText().toString().getBytes());
+            fileOutputStream.close();
+
+            FileInputStream fileInputStream = openFileInput("data");
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
+            textView.setText(bufferedReader.readLine());
+            fileInputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    private void WriteAndReadExternalFile()
+    {
+        File path = Environment.getExternalStorageDirectory();
+        File file = new File(path,"external_data");
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            fileOutputStream.write(editText.getText().toString().getBytes());
+            fileOutputStream.close();
+
+            FileInputStream fileInputStream = new FileInputStream(file);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
+            textView.setText(bufferedReader.readLine());
+            fileInputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    private void WriteAndReadSharedPreferences() {
+        // 写SP
+        SharedPreferences sharedPreferences = getSharedPreferences("sharedPreferences",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        SharedPreferences.Editor editor2 = sharedPreferences.edit();
+
+        Toast.makeText(this,String.valueOf(editor.hashCode())+"#"+String.valueOf(editor2.hashCode()),Toast.LENGTH_LONG).show();
+
+
+        editor.putString("EditText",editText.getText().toString());
+        editor.clear();
+        editor2.remove("EditText");
+        editor.commit();
+
+        editor2.putString("Edit2","Edit2");
+
+        editor2.commit();
+        // 读
+        // SharedPreferences sharedPreferences = getSharedPreferences("sharedPreferences",MODE_PRIVATE);
+        String text = sharedPreferences.getString("EditText","DefaultString");
+        textView.setText(text);
     }
 
     private void JsonParse() {
         String jsonStr = "{" +"    \"name\": \"xiaoming\"," + "    \"age\": 20" +"}";
-        Gson gson = new Gson();
-        Student stu = gson.fromJson(jsonStr,Student.class);
-
+        String arrayJson= "[1,2,3]";
+        Student stu = Student.fromJson(jsonStr);
         Student stu2 = new Student();
         stu2.name = "xiaohong";
         stu2.age = 21;
-        String stu2JsonStr = gson.toJson(stu2);
-
-        textView.setText(stu2JsonStr);
+        textView.setText(stu2.toJson());
     }
 
     private void WriteAndReadXml() {
@@ -148,53 +227,6 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
-    {
-        if (requestCode == this.requestCode){
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                WriteAndReadExternalFile();
-            }
-        }
-    }
-
-    private void WriteAndReadInternalFile()
-    {
-        try {
-            FileOutputStream fileOutputStream = openFileOutput("data",MODE_APPEND);
-            fileOutputStream.write(editText.getText().toString().getBytes());
-            fileOutputStream.close();
-
-            FileInputStream fileInputStream = openFileInput("data");
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
-            textView.setText(bufferedReader.readLine());
-            fileInputStream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-    }
-    private void WriteAndReadExternalFile()
-    {
-        File path = Environment.getExternalStorageDirectory();
-        File file = new File(path,"external_data");
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            fileOutputStream.write(editText.getText().toString().getBytes());
-            fileOutputStream.close();
-
-            FileInputStream fileInputStream = new FileInputStream(file);
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
-            textView.setText(bufferedReader.readLine());
-            fileInputStream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }catch (IOException e){
-            e.printStackTrace();
-        }
     }
 
 

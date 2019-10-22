@@ -48,6 +48,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="JSON" />
+
+        <Button
+            android:id="@+id/sharedPreferencesBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SharedPreferences" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
