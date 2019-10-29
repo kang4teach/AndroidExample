@@ -26,8 +26,7 @@ public class MainActivity extends AppCompatActivity {
         for(int i =0;i < gridLayout.getChildCount();i++){
             Button btn = (Button) gridLayout.getChildAt(i);
                btn.setOnClickListener((view)->{
-                      calculatorController.input(btn.getText().toString());
-                      displayString = calculatorController.calculate();
+                      displayString =  calculatorController.input(btn.getText().toString());
                       textView.setText(displayString);
                 });
             }
