@@ -29,6 +29,6 @@ public class MainActivity extends AppCompatActivity {
                       displayString =  calculatorController.input(btn.getText().toString());
                       textView.setText(displayString);
                 });
-            }
+        }
     }
 }

@@ -3,8 +3,6 @@ package com.example.calculator;
 public class CalculatorController {
     private String numberString = "0";
     Calculator calculatorObj ;
-
-
     public String input(String content) {
         if (isNumberic(content)){
             if (numberString.equals("0")){
@@ -21,10 +19,6 @@ public class CalculatorController {
         return numberString;
     }
 
-    private String sqrt(String number)
-    {
-        return String.valueOf(Math.sqrt(Double.parseDouble(number)));
-    }
     private boolean isNumberic(String content) {
         switch (content){
             case "0": case "1": case "2": case "3": case "4":

@@ -1,7 +1,5 @@
 package com.example.calculator;
 
-import java.util.HashMap;
-
 class Calculator {
     CalculateOperation operation;
     private String cachedNumberString;
@@ -10,7 +8,7 @@ class Calculator {
     public Calculator(String numberString,String operator)
     {
         this.cachedNumberString = numberString;
-        operation = new OperationBuilder().build(operator);
+        operation = new OperationFactory().create(operator);
     }
     String calculate(String displayString){
         currentNumberString = displayString;
