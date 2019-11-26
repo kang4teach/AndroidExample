@@ -22,9 +22,16 @@ import java.util.NoSuchElementException;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button startBtn,endBtn,bindBtn ,operateBtn;
+    Button startBtn,endBtn,bindBtn ,operateBtn, unbindBtn;
     MyService.MyBinder myBinder ;
     MyConnect myConnect;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(myConnect);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,8 +84,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
+        unbindBtn = findViewById(R.id.unBindBtn);
+        unbindBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                unbindService(myConnect);
+            }
+        });
     }
 
     class MyConnect implements ServiceConnection {
